@@ -13,11 +13,10 @@ app.use(express.json()); // For parsing JSON requests
 
 // PostgreSQL connection pool setup
 const pool = new Pool({
-  host: process.env.PGHOST,
-  user: process.env.PGUSER,
-  database: process.env.PGDATABASE,
-  password: process.env.PGPASSWORD,
-  port: process.env.PGPORT,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false, // If self-signed certificates are used
+  },
 });
 
 // Test connection
@@ -29,61 +28,38 @@ pool.connect((err) => {
   }
 });
 
-console.log(
-  process.env.PGHOST,
-  process.env.PGUSER,
-  process.env.PGDATABASE,
-  process.env.PGPASSWORD,
-  process.env.PGPORT
-); // Should print your database host
-
 // Basic route
 app.get("/", (req, res) => {
   return res.status(200).send("Hello from the backend!");
 });
 
-// API route example
-app.get("/api/user", (req, res) => {
+// GET route to fetch all users
+app.get("/api/user/:id", async (req, res) => {
+  const userId = req.params.id;
+  if (!userId) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
   try {
-    const user = [
-      {
-        id: 1,
-        name: "Jakub",
-        email: "test@test.com",
-        bmi: 111,
-        age: 32,
-        weight: 69,
-        activity_level: 1,
-        water_intake: 1.5,
-        goal: [
-          {
-            type: "Weight Loss",
-            weight: 30,
-          },
-        ],
-        workouts: [
-          {
-            id: 2,
-            type: "Dead Lift",
-            sets: 3,
-            reps: 10,
-            weight: 100,
-            duration: 30,
-            calories_burnt: 200,
-          },
-          {
-            id: 3,
-            type: "Squats",
-            sets: 3,
-            reps: 12,
-            weight: 20,
-            duration: 30,
-            calories_burnt: 200,
-          },
-        ],
-      },
-    ];
-    return res.json(user);
+    // Query user details
+    const userResult = await pool.query(
+      `SELECT * FROM users WHERE id = $1`,
+      [userId]
+    );
+    const user = userResult.rows[0];
+    // Query goals related to the user
+    const goalsResult = await pool.query(
+      `SELECT * FROM goals WHERE user_id = $1`,
+      [userId]
+    );
+    const goals = goalsResult.rows;
+
+    // Query workouts related to the user
+    const workoutsResult = await pool.query(
+      `SELECT * FROM workouts WHERE user_id = $1`,
+      [userId]
+    );
+    const workouts = workoutsResult.rows;
+    return res.status(200).json({ user, goals, workouts });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
