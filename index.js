@@ -49,10 +49,18 @@ app.get("/api/user", (req, res) => {
       {
         id: 1,
         name: "Jakub",
-        bmi: "",
+        email: "test@test.com",
+        bmi: 111,
         age: 32,
         weight: 69,
         activity_level: 1,
+        water_intake: 1.5,
+        goal: [
+          {
+            type: "Weight Loss",
+            weight: 30,
+          },
+        ],
         workouts: [
           {
             id: 2,
@@ -60,13 +68,17 @@ app.get("/api/user", (req, res) => {
             sets: 3,
             reps: 10,
             weight: 100,
+            duration: 30,
+            calories_burnt: 200,
           },
           {
-            id: 2,
+            id: 3,
             type: "Squats",
             sets: 3,
             reps: 12,
             weight: 20,
+            duration: 30,
+            calories_burnt: 200,
           },
         ],
       },
