@@ -1,6 +1,7 @@
 // index.js
 const express = require("express");
 const cors = require("cors");
+const { Pool } = require("pg");
 require("dotenv").config();
 
 const app = express();
@@ -9,6 +10,32 @@ const port = process.env.PORT || 5000;
 // Middleware
 app.use(cors());
 app.use(express.json()); // For parsing JSON requests
+
+// PostgreSQL connection pool setup
+const pool = new Pool({
+  host: process.env.PGHOST,
+  user: process.env.PGUSER,
+  database: process.env.PGDATABASE,
+  password: process.env.PGPASSWORD,
+  port: process.env.PGPORT,
+});
+
+// Test connection
+pool.connect((err) => {
+  if (err) {
+    console.error("Error connecting to PostgreSQL", err);
+  } else {
+    console.log("Connected to PostgreSQL");
+  }
+});
+
+console.log(
+  process.env.PGHOST,
+  process.env.PGUSER,
+  process.env.PGDATABASE,
+  process.env.PGPASSWORD,
+  process.env.PGPORT
+); // Should print your database host
 
 // Basic route
 app.get("/", (req, res) => {
@@ -22,7 +49,7 @@ app.get("/api/user", (req, res) => {
       {
         id: 1,
         name: "Jakub",
-        bmi,
+        bmi: "",
         age: 32,
         weight: 69,
         activity_level: 1,
