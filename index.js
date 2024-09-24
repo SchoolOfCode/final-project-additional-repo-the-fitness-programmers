@@ -22,9 +22,10 @@ app.get("/api/user", (req, res) => {
       {
         id: 1,
         name: "Jakub",
-        bmi: 23,
+        bmi,
         age: 32,
         weight: 69,
+        activity_level: 1,
         workouts: [
           {
             id: 2,
@@ -32,6 +33,13 @@ app.get("/api/user", (req, res) => {
             sets: 3,
             reps: 10,
             weight: 100,
+          },
+          {
+            id: 2,
+            type: "Squats",
+            sets: 3,
+            reps: 12,
+            weight: 20,
           },
         ],
       },
