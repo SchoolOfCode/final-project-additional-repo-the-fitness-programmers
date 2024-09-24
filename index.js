@@ -12,16 +12,34 @@ app.use(express.json()); // For parsing JSON requests
 
 // Basic route
 app.get("/", (req, res) => {
-  res.send("Hello from the backend!");
+  return res.status(200).send("Hello from the backend!");
 });
 
 // API route example
-app.get("/api/products", (req, res) => {
-  const products = [
-    { id: 1, name: "Product 1", price: 10 },
-    { id: 2, name: "Product 2", price: 20 },
-  ];
-  res.json(products);
+app.get("/api/user", (req, res) => {
+  try {
+    const user = [
+      {
+        id: 1,
+        name: "Jakub",
+        bmi: 23,
+        age: 32,
+        weight: 69,
+        workouts: [
+          {
+            id: 2,
+            type: "Dead Lift",
+            sets: 3,
+            reps: 10,
+            weight: 100,
+          },
+        ],
+      },
+    ];
+    return res.json(user);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
 });
 
 // Start the server
