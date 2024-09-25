@@ -46,6 +46,7 @@ app.get("/api/user/:id", async (req, res) => {
       [userId]
     );
     const user = userResult.rows[0];
+
     // Query goals related to the user
     const goalsResult = await pool.query(
       `SELECT * FROM goals WHERE user_id = $1`,
@@ -59,6 +60,7 @@ app.get("/api/user/:id", async (req, res) => {
       [userId]
     );
     const workouts = workoutsResult.rows;
+
     return res.status(200).json({ user, goals, workouts });
   } catch (err) {
     return res.status(500).json({ error: err.message });
