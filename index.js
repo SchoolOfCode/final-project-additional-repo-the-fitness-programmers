@@ -73,7 +73,7 @@ app.get("/api/user/:id", async (req, res) => {
 });
 
 // Update an existing user's workouts
-app.post("/api/user/workouts/:id", async (req, res) => {
+app.put("/api/user/workouts/:id", async (req, res) => {
   const userId = req.params.id;
   const { type, duration } = req.body;
 
